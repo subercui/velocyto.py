@@ -270,8 +270,8 @@ class VelocytoLoom:
                 sigma = Sf.std(1, ddof=1)
 
             cv = sigma / mu
-            log_m = np.log2(mu)
-            log_cv = np.log2(cv)
+            log_m = np.log2(mu)  # log of the mean expression of every gene, (9406,)
+            log_cv = np.log2(cv) # cv for every gene
 
             if svr_gamma is None:
                 svr_gamma = 150. / len(mu)
@@ -281,7 +281,7 @@ class VelocytoLoom:
             clf.fit(log_m[:, None], log_cv)
             fitted_fun = clf.predict
             ff = fitted_fun(log_m[:, None])
-            score = log_cv - ff
+            score = log_cv - ff  # the scores of N genes
             if sort_inverse:
                 score = - score
             nth_score = np.sort(score)[::-1][N]
@@ -491,7 +491,7 @@ class VelocytoLoom:
             self.S_prefilter = sparse.csr_matrix(self.S)
             self.ra_prefilter = deepcopy(self.ra)
 
-        self.U = self.U[tmp_filter, :]
+        self.U = self.U[tmp_filter, :]  #S, U use the same filter
         self.S = self.S[tmp_filter, :]
         self.ra = {k: v[tmp_filter] for k, v in self.ra.items()}
 
@@ -1536,12 +1536,13 @@ class VelocytoLoom:
                     raise ValueError(f"ndims was set to {ndims} but hidim != 'pcs'. Set ndims = None for hidim='{hidim}'")
                 hi_dim = getattr(self, hidim)  # [:, :ndims]
                 hi_dim_t = hi_dim + self.used_delta_t * self.delta_S  # [:, :ndims] [:, :ndims]
+                # what are you doing here with this line?!
                 if calculate_randomized:
                     self.delta_S_rndm = np.copy(self.delta_S)
                     permute_rows_nsign(self.delta_S_rndm)
                     hi_dim_t_rndm = hi_dim + self.used_delta_t * self.delta_S_rndm
 
-            embedding = getattr(self, embed)
+            embedding = getattr(self, embed)  # here the embedding is the pca features
             self.embedding = embedding
             logging.debug("Calculate KNN in the embedding space")
             nn = NearestNeighbors(n_neighbors=n_neighbors + 1, n_jobs=n_jobs)

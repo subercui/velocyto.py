@@ -11,7 +11,7 @@ from .speedboosted import _colDeltaCorpartial, _colDeltaCorLog10partial, _colDel
 def colDeltaCor(emat: np.ndarray, dmat: np.ndarray, threads: int=None) -> np.ndarray:
     """Calculate the correlation between the displacement (d[:,i])
     and the difference between a cell and every other (e - e[:, i])
-    
+
     Parallel cython+OpenMP implemetation
 
     Arguments
@@ -36,7 +36,7 @@ def colDeltaCor(emat: np.ndarray, dmat: np.ndarray, threads: int=None) -> np.nda
 def colDeltaCorpartial(emat: np.ndarray, dmat: np.ndarray, ixs: np.ndarray, threads: int=None) -> np.ndarray:
     """Calculate the correlation between the displacement (d[:,i])
     and the difference between a cell and every other (e - e[:, i])
-    
+
     Parallel cython+OpenMP implemetation
 
     Arguments
@@ -65,7 +65,7 @@ def colDeltaCorpartial(emat: np.ndarray, dmat: np.ndarray, ixs: np.ndarray, thre
 def colDeltaCorLog10(emat: np.ndarray, dmat: np.ndarray, threads: int=None, psc: float=1.0) -> np.ndarray:
     """Calculate the correlation between the displacement (d[:,i])
     and the difference between a cell and every other (e - e[:, i])
-    
+
     Parallel cython+OpenMP implemetation
 
     Arguments
@@ -90,7 +90,7 @@ def colDeltaCorLog10(emat: np.ndarray, dmat: np.ndarray, threads: int=None, psc:
 def colDeltaCorLog10partial(emat: np.ndarray, dmat: np.ndarray, ixs: np.ndarray, threads: int=None, psc: float=1.0) -> np.ndarray:
     """Calculate the correlation between the displacement (d[:,i])
     and the difference between a cell and every other (e - e[:, i])
-    
+
     Parallel cython+OpenMP implemetation
 
     Arguments
@@ -119,7 +119,7 @@ def colDeltaCorLog10partial(emat: np.ndarray, dmat: np.ndarray, ixs: np.ndarray,
 def colDeltaCorSqrt(emat: np.ndarray, dmat: np.ndarray, threads: int=None, psc: float=0.0) -> np.ndarray:
     """Calculate the correlation between the displacement (d[:,i])
     and the difference between a cell and every other (e - e[:, i])
-    
+
     Parallel cython+OpenMP implemetation
 
     Arguments
@@ -144,7 +144,7 @@ def colDeltaCorSqrt(emat: np.ndarray, dmat: np.ndarray, threads: int=None, psc: 
 def colDeltaCorSqrtpartial(emat: np.ndarray, dmat: np.ndarray, ixs: np.ndarray, threads: int=None, psc: float=0.0) -> np.ndarray:
     """Calculate the correlation between the displacement (d[:,i])
     and the difference between a cell and every other (e - e[:, i])
-    
+
     Parallel cython+OpenMP implemetation
 
     Arguments
@@ -194,7 +194,7 @@ def _fit1_slope_weighted(y: np.ndarray, x: np.ndarray, w: np.ndarray, limit_gamm
     if not np.any(x):
         m = np.NAN  # It is definetelly not at steady state!!!
     elif not np.any(y):
-        m = 0
+        m = 0  # No uspliced expressions, since computing u/s, then the m euals 0
     else:
         if limit_gamma:
             if np.median(y) > np.median(x):
@@ -317,7 +317,7 @@ def fit_slope_weighted(Y: np.ndarray, X: np.ndarray, W: np.ndarray, return_R2: b
     if return_R2:
         R2 = np.zeros(Y.shape[0], dtype="float32")
     for i in range(Y.shape[0]):
-        m = _fit1_slope_weighted(Y[i, :], X[i, :], W[i, :], limit_gamma)
+        m = _fit1_slope_weighted(Y[i, :], X[i, :], W[i, :], limit_gamma)  # here in this line, Y[i, :] is like (cells,) a vector of expressions across cells
         slopes[i] = m
         if return_R2:
             # NOTE: the coefficient of determination is not weighted but the fit is
@@ -370,7 +370,7 @@ def clusters_stats(U: np.ndarray, S: np.ndarray,
                    clusters_uid: np.ndarray, cluster_ix: np.ndarray,
                    size_limit: int=40) -> Tuple[np.ndarray, np.ndarray]:
     """Calculate the averages per cluster
-    
+
     If the cluster is too small (size<size_limit) the average of the toal is reported instead
     """
     U_avgs = np.zeros((S.shape[0], len(clusters_uid)))
@@ -385,5 +385,5 @@ def clusters_stats(U: np.ndarray, S: np.ndarray,
             U_avgs[:, i], S_avgs[:, i] = U[:, cluster_filter].mean(1), S[:, cluster_filter].mean(1)
         else:
             U_avgs[:, i], S_avgs[:, i] = U.mean(1), S.mean(1)
-            
+
     return U_avgs, S_avgs
