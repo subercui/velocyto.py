@@ -1343,6 +1343,8 @@ class VelocytoLoom:
             self.Upred = getattr(self, which_gamma)[:, None] * getattr(self, which_S)
             # self.Upred = self.gammas[:, None] * self.Sx_sz
         else:
+            # using self.q as offset to cells of different cell types, check where it comes from
+            # and this self.Upred is the extrapolated U for the cells, (1440, N_cells 1720)
             self.Upred = getattr(self, which_gamma)[:, None] * getattr(self, which_S) + getattr(self, which_offset)[:, None]
 
     def calculate_velocity(self, kind: str="residual", eps: float=None) -> None:
